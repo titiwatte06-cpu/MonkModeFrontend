@@ -3,6 +3,7 @@ import { createActivity } from '../api/activities';
 
 function AddActivityForm({ onAdded }) {
   const [name, setName] = useState('');
+  const [emoji, setEmoji] = useState('');
   const [category, setCategory] = useState('other');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,8 +20,10 @@ function AddActivityForm({ onAdded }) {
     setIsSubmitting(true);
 
     try {
-      await createActivity(name.trim(), category);
+      const combinedName = [emoji.trim(), name.trim()].filter(Boolean).join(' ');
+      await createActivity(combinedName, category);
       setName('');
+      setEmoji('');
       setCategory('other');
       if (onAdded) {
         await onAdded();
@@ -38,6 +41,18 @@ function AddActivityForm({ onAdded }) {
       className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+
+
+        <label className="sm:w-28">
+          <span className="mb-2 block text-sm font-medium text-gray-700">Emoji</span>
+          <input
+            value={emoji}
+            onChange={(event) => setEmoji(event.target.value)}
+            placeholder="🙏"
+            className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none ring-0 transition focus:border-gray-400 focus:bg-white"
+          />
+        </label>
+        
         <label className="flex-1">
           <span className="mb-2 block text-sm font-medium text-gray-700">Activity name</span>
           <input
@@ -47,6 +62,8 @@ function AddActivityForm({ onAdded }) {
             className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none ring-0 transition focus:border-gray-400 focus:bg-white"
           />
         </label>
+
+        
 
         <label className="sm:w-44">
           <span className="mb-2 block text-sm font-medium text-gray-700">Category</span>
